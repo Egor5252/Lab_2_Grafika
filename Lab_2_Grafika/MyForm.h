@@ -1,4 +1,10 @@
 #pragma once
+#include <vector>
+
+struct Coorditats
+{
+	int x, y;
+};
 
 namespace Lab2Grafika {
 
@@ -44,9 +50,11 @@ namespace Lab2Grafika {
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ Y;
 	private: System::Windows::Forms::PictureBox^ pictureBox1;
 	private: System::Windows::Forms::TextBox^ textBox1;
-	private: System::Windows::Forms::Button^ button1;
-	private: System::Windows::Forms::Button^ button2;
-	private: System::Windows::Forms::RichTextBox^ richTextBox1;
+
+
+
+
+
 
 
 
@@ -71,9 +79,6 @@ namespace Lab2Grafika {
 			this->Y = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->pictureBox1 = (gcnew System::Windows::Forms::PictureBox());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
-			this->button1 = (gcnew System::Windows::Forms::Button());
-			this->button2 = (gcnew System::Windows::Forms::Button());
-			this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataGridView1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			this->SuspendLayout();
@@ -86,6 +91,7 @@ namespace Lab2Grafika {
 			this->dataGridView1->Name = L"dataGridView1";
 			this->dataGridView1->Size = System::Drawing::Size(245, 411);
 			this->dataGridView1->TabIndex = 0;
+			this->dataGridView1->CellValueChanged += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &MyForm::dataGridView1_CellValueChanged);
 			// 
 			// X
 			// 
@@ -116,42 +122,11 @@ namespace Lab2Grafika {
 			this->textBox1->Size = System::Drawing::Size(118, 20);
 			this->textBox1->TabIndex = 4;
 			// 
-			// button1
-			// 
-			this->button1->Location = System::Drawing::Point(263, 397);
-			this->button1->Name = L"button1";
-			this->button1->Size = System::Drawing::Size(75, 23);
-			this->button1->TabIndex = 5;
-			this->button1->Text = L"button1";
-			this->button1->UseVisualStyleBackColor = true;
-			this->button1->Click += gcnew System::EventHandler(this, &MyForm::button1_Click);
-			// 
-			// button2
-			// 
-			this->button2->Location = System::Drawing::Point(361, 400);
-			this->button2->Name = L"button2";
-			this->button2->Size = System::Drawing::Size(75, 23);
-			this->button2->TabIndex = 6;
-			this->button2->Text = L"button2";
-			this->button2->UseVisualStyleBackColor = true;
-			this->button2->Click += gcnew System::EventHandler(this, &MyForm::button2_Click);
-			// 
-			// richTextBox1
-			// 
-			this->richTextBox1->Location = System::Drawing::Point(713, 82);
-			this->richTextBox1->Name = L"richTextBox1";
-			this->richTextBox1->Size = System::Drawing::Size(123, 218);
-			this->richTextBox1->TabIndex = 7;
-			this->richTextBox1->Text = L"";
-			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(848, 430);
-			this->Controls->Add(this->richTextBox1);
-			this->Controls->Add(this->button2);
-			this->Controls->Add(this->button1);
+			this->ClientSize = System::Drawing::Size(657, 430);
 			this->Controls->Add(this->textBox1);
 			this->Controls->Add(this->pictureBox1);
 			this->Controls->Add(this->dataGridView1);
@@ -176,20 +151,24 @@ namespace Lab2Grafika {
 		this->textBox1->Text = "X = " + e->X.ToString() + "   Y = " + e->Y.ToString();
 	}
 
-	private: System::Void button1_Click(System::Object^ sender, System::EventArgs^ e) {
+	private: System::Void dataGridView1_CellValueChanged(System::Object^ sender, System::Windows::Forms::DataGridViewCellEventArgs^ e) {
+		int rowcount = this->dataGridView1->RowCount;
+		std::vector<Coorditats> V;
+		for (int i = 0; i < rowcount - 1; ++i) {
+			Coorditats C{};
+			C.x = Convert::ToInt32(this->dataGridView1->Rows[i]->Cells[0]->Value);
+			C.y = Convert::ToInt32(this->dataGridView1->Rows[i]->Cells[1]->Value);
+			V.push_back(C);
+		}
+
 		Graphics^ g = this->pictureBox1->CreateGraphics();
 		g->Clear(SystemColors::AppWorkspace);
 
 		Pen^ redPen = gcnew Pen(Color::Red);
 		redPen->Width = 1;
 
-		g->DrawLine(redPen, 0, 0, 100, 100);
-	}
-	private: System::Void button2_Click(System::Object^ sender, System::EventArgs^ e) {
-		auto A = this->dataGridView1->DataBindings;
-		auto a = A->GetEnumerator();
-		while (a->MoveNext()) {
-			this->richTextBox1->Text += a->Current->ToString();
+		for (int i = 0; i < rowcount - 2; ++i) {
+			g->DrawLine(redPen, V[i].x, V[i].y, V[i + 1].x, V[i + 1].y);
 		}
 	}
 };

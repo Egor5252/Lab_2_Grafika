@@ -161,14 +161,18 @@ namespace Lab2Grafika {
 			V.push_back(C);
 		}
 
-		Graphics^ g = this->pictureBox1->CreateGraphics();
-		g->Clear(SystemColors::AppWorkspace);
+		if (V.size() > 1) {
+			Graphics^ g = this->pictureBox1->CreateGraphics();
+			g->Clear(SystemColors::AppWorkspace);
 
-		Pen^ redPen = gcnew Pen(Color::Red);
-		redPen->Width = 1;
+			Pen^ redPen = gcnew Pen(Color::Red);
+			redPen->Width = 1;
 
-		for (int i = 0; i < rowcount - 2; ++i) {
-			g->DrawLine(redPen, V[i].x, V[i].y, V[i + 1].x, V[i + 1].y);
+			g->DrawArc(redPen, V[0].x - 3, V[0].y - 3, 6, 6, 0, 360);
+			for (int i = 0; i < rowcount - 2; ++i) {
+				g->DrawLine(redPen, V[i].x, V[i].y, V[i + 1].x, V[i + 1].y);
+				g->DrawArc(redPen, V[i + 1].x - 3, V[i + 1].y - 3, 6, 6, 0, 360);
+			}
 		}
 	}
 };
